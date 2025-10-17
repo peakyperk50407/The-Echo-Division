@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE RITUAL OF THE WICKED HOST - SOUL STITCH</title>
+    <!-- Load Tailwind CSS --><script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* =========================================================================
+         * STYLING & AESTHETICS (Active Forbidden Ritual)
+         * ========================================================================= */
+        :root {
+            /* Forbidden Artifact Palette */
+            --abyssal-black: #080000;   /* Very deep, near-black red */
+            --dark-core: rgba(0, 0, 0, 0.7); /* Transparent core for glyph bleed */
+            --dark-ink: #c7c1b8;        /* Faded Ink Color - Secondary Text */
+            --ritual-red: #8b0000;      /* Dried Blood Border */
+            --sickly-gold: #c79a49;     /* Unstable Gold Highlight */
+            --glyph-glow: #ff4500;      /* Orange-Red for intense pulse */
+        }
+        body {
+            font-family: 'Crimson Text', Georgia, serif; 
+            background-color: var(--abyssal-black);
+            color: var(--dark-ink); 
+            min-height: 100vh;
+            overflow: hidden; /* Hide potential scrollbar from fixed elements */
+        }
+
+        /* ------------------------------------------------------------- 
+         * BACKGROUND AMBIENCE: DYNAMIC GLYPHS 
+         * ------------------------------------------------------------- */
+        
+        /* The animation for the glyphs: Fading in, pulsing, and fading out */
+        @keyframes dynamic-glyph-pulse {
+            0% { opacity: 0; transform: scale(1) rotate(0deg); }
+            10% { opacity: 0.25; transform: scale(1.3) rotate(5deg); } /* Increased opacity and scale for pulse */
+            20% { opacity: 0.2; transform: scale(1.2) rotate(2deg); }
+            100% { opacity: 0; transform: scale(0.9) rotate(-5deg); } /* Slow fade and shrink before removal */
+        }
+
+        .dynamic-glyph {
+            position: fixed;
+            font-size: 7vw; /* Increased size */
+            color: var(--sickly-gold); 
+            opacity: 0;
+            pointer-events: none;
+            z-index: 10; /* Above the mist, below the main panel */
+            text-shadow: 0 0 15px var(--glyph-glow);
+            animation: dynamic-glyph-pulse 10s forwards ease-out; /* 10s duration for pulse and fade */
+        }
+        
+        /* ------------------------------------------------------------- 
+         * GLITCH EFFECT - STRONGER INTENSITY!
+         * ------------------------------------------------------------- */
+        #glitchOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 15; /* Above mist/glyphs, below main panel */
+            pointer-events: none;
+            opacity: 0;
+        }
+
+        @keyframes intense-screen-glitch {
+            0% { transform: translate(0, 0) skewX(0deg); opacity: 0; filter: none; }
+            /* Aggressive shift and color change */
+            5% { transform: translate(-15px, 8px) skewX(8deg); opacity: 1; filter: hue-rotate(150deg) brightness(1.5); }
+            /* Maximum distortion and inversion */
+            10% { transform: translate(20px, -15px) skewX(-10deg); opacity: 1; filter: invert(1) hue-rotate(240deg); }
+            /* Secondary shift */
+            15% { transform: translate(-10px, 15px) skewX(6deg); opacity: 0.9; filter: hue-rotate(300deg); }
+            /* Return to normal */
+            20% { transform: translate(0, 0) skewX(0deg); opacity: 0; filter: none; }
+            100% { opacity: 0; }
+        }
+
+        .glitch-active {
+            /* Background flash on overlay */
+            background: rgba(255, 0, 0, 0.4); 
+            box-shadow: 0 0 100px rgba(0, 255, 255, 0.8); 
+            
+            /* Apply fast, aggressive animation to the overlay */
+            animation: intense-screen-glitch 0.3s linear forwards; 
+        }
+
+        /* ------------------------------------------------------------- 
+         * PANEL CORRUPTION EFFECT (NEW)
+         * ------------------------------------------------------------- */
+        
+        @keyframes panel-pull {
+            0% { transform: translate(0, 0) skewY(0deg); filter: hue-rotate(0deg); }
+            /* Aggressive horizontal and vertical pull (twisting) */
+            10% { 
+                transform: translate(-10px, 5px) skewY(5deg); 
+                filter: hue-rotate(150deg);
+                box-shadow: 0 0 50px rgba(255, 0, 255, 0.5); /* Magenta Shadow Pulse */
+            }
+            20% { 
+                transform: translate(10px, -5px) skewY(-5deg); 
+                filter: hue-rotate(250deg); 
+                box-shadow: 0 0 50px rgba(0, 255, 255, 0.5); /* Cyan Shadow Pulse */
+            }
+            30% { transform: translate(0, 0) skewY(0deg); filter: hue-rotate(0deg); }
+            100% { transform: none; filter: none; }
+        }
+
+        .panel-corrupt {
+            /* This class applies the panel-pull animation */
+            animation: panel-pull 0.3s linear forwards;
+        }
+
+
+        /* ------------------------------------------------------------- 
+         * BACKGROUND AMBIENCE: MIST / HEAT HAZE 
+         * ------------------------------------------------------------- */
+        #mistOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; 
+            pointer-events: none;
+            /* Subtle red/black shifting gradient */
+            background: radial-gradient(circle at 50% 50%, rgba(255, 69, 0, 0.05) 0%, rgba(0, 0, 0, 0) 70%), 
+                        linear-gradient(135deg, rgba(139, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.1) 100%);
+            animation: mist-move 60s linear infinite;
+            opacity: 0.8;
+        }
+
+        @keyframes mist-move {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 100% 100%; }
+        }
+
+        /* ------------------------------------------------------------- 
+         * INTERFACE ELEMENTS 
+         * ------------------------------------------------------------- */
+        
+        /* Main Panel Container: The Heart of the Ritual */
+        .occult-panel {
+            background: var(--dark-core); 
+            border: 3px solid var(--ritual-red); 
+            padding: 30px;
+            position: relative;
+            z-index: 20; /* Ensure the panel is above all background elements */
+            /* Ritualistic Pulsating Glyph Effect */
+            animation: glyph-pulse 12s infinite alternate ease-in-out; 
+            transition: transform 0.3s, filter 0.3s; /* Smooth transition when animation is off */
+        }
+
+        @keyframes glyph-pulse {
+            0% { box-shadow: 0 0 10px rgba(139, 0, 0, 0.5), inset 0 0 50px rgba(0, 0, 0, 1); }
+            50% { box-shadow: 0 0 40px var(--glyph-glow), inset 0 0 70px rgba(139, 0, 0, 0.3); } 
+            100% { box-shadow: 0 0 10px rgba(139, 0, 0, 0.5), inset 0 0 50px rgba(0, 0, 0, 1); }
+        }
+
+        /* Title Bar - Inscribed/Torn Look */
+        .occult-title-bar {
+            color: var(--sickly-gold);
+            background: transparent; 
+            border-bottom: 3px dashed var(--ritual-red);
+            padding: 10px 0;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: -30px -30px 0 -30px; 
+            text-align: center;
+            text-shadow: 0 0 5px var(--glyph-glow);
+        }
+        
+        /* Custom Button Styling - Sealed in Blood */
+        .occult-button {
+            background-color: #000000;
+            color: var(--dark-ink);
+            border: 2px solid var(--ritual-red);
+            box-shadow: 0 0 5px rgba(90, 0, 0, 0.8);
+            cursor: default;
+            transition: all 0.2s;
+            border-radius: 0; 
+        }
+        
+        /* Activated Button Style (Ritual Pulse) */
+        @keyframes dark-pulse {
+            0% { background: #1a0000; box-shadow: 0 0 5px var(--ritual-red); }
+            50% { background: #330000; box-shadow: 0 0 15px var(--sickly-gold); }
+            100% { background: #1a0000; box-shadow: 0 0 5px var(--ritual-red); }
+        }
+
+        .occult-button:not(:disabled) {
+            background: var(--ritual-red); 
+            border-color: var(--sickly-gold);
+            color: white;
+            animation: dark-pulse 0.8s infinite alternate;
+            cursor: pointer;
+        }
+
+        /* Input Fields - The Signature Spot */
+        input[type="text"] {
+            background-color: #000000; 
+            color: var(--sickly-gold);
+            border: 1px solid var(--ritual-red); 
+            box-shadow: inset 0 0 10px rgba(255, 51, 51, 0.4);
+            border-radius: 0;
+            font-family: 'Courier New', monospace;
+            text-shadow: 0 0 2px var(--sickly-gold);
+        }
+        
+        /* Flashing Animation - Text Decay/Corruption */
+        @keyframes text-decay {
+            0% { color: var(--sickly-gold); text-shadow: 0 0 10px var(--glyph-glow), 0 0 1px var(--sickly-gold); } 
+            50% { color: var(--dark-ink); text-shadow: none; opacity: 0.95; }
+            100% { color: var(--sickly-gold); text-shadow: 0 0 8px var(--glyph-glow), 0 0 1px var(--sickly-gold); } 
+        }
+        .flashing-text {
+            animation: text-decay 0.1s infinite alternate; /* High-frequency decay */
+        }
+        
+        /* Status Box - Inscribed in the corner */
+        #statusContainer .status-box {
+            background-color: #000000; 
+            border: 1px dashed var(--sickly-gold); 
+            box-shadow: inset 0 0 10px rgba(255, 69, 0, 0.4);
+            color: var(--dark-ink);
+            border-radius: 0;
+        }
+        
+        /* Countdown Display - The Bleeding Clock */
+        #countdownDisplay {
+            font-size: 4rem; 
+            font-weight: 700;
+            color: var(--sickly-gold);
+            text-shadow: 0 0 15px var(--glyph-glow), 0 0 30px var(--sickly-gold); 
+            letter-spacing: 0.2em; 
+            padding: 10px 0;
+            line-height: 1;
+        }
+
+        /* Countdown shake/instability */
+        @keyframes slight-shake {
+            0% { transform: translate(1px, 1px); }
+            25% { transform: translate(-1px, 0px); }
+            50% { transform: translate(1px, -1px); }
+            75% { transform: translate(-1px, 1px); }
+            100% { transform: translate(1px, 1px); }
+        }
+        .countdown-unstable {
+            animation: slight-shake 0.1s infinite alternate; 
+        }
+
+        /* Video element styling - The Scar */
+        #mainVideoFeed {
+            width: 100%;
+            max-width: 600px;
+            aspect-ratio: 16 / 9; 
+            border: 10px solid var(--sickly-gold); 
+            border-radius: 0;
+            box-shadow: 0 0 30px var(--glyph-glow); 
+            background-color: black;
+            margin-top: 20px;
+        }
+
+        /* Custom Symbol Styling (Now Circular!) */
+        #mainSymbol {
+            width: 80px;
+            height: 80px;
+            filter: drop-shadow(0 0 8px var(--glyph-glow)) drop-shadow(0 0 3px var(--sickly-gold));
+            margin: 0 auto 20px auto; /* Center it and add space below */
+            border-radius: 50%; /* Makes the image circular */
+        }
+
+        /* Modal Overlay Styling */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8); 
+            z-index: 50; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8 flex items-start justify-center">
+
+    <!-- GLYPH CONTAINER: This is where the JS will spawn the animated symbols -->
+    <div id="glyphContainer" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%;"></div>
+    
+    <!-- GLITCH OVERLAY: NEW ELEMENT FOR RIFT INSTABILITY -->
+    <div id="glitchOverlay"></div>
+
+    <!-- MIST/HAZE OVERLAY -->
+    <div id="mistOverlay"></div>
+    
+    <!-- SINGLE AUDIO PLAYER FOR ALL SOUNDS (Hidden) -->
+    <audio id="audioPlayer" loop>
+        <source id="audioSource" src="https://res.cloudinary.com/dv6jfgesm/video/upload/v1760435544/Creepy_Little_Girl_Laughing_Giggling_Scary_Horror_Sound_Effect_creepylaughing_scarysound_azo3hd.mp3">
+        Your browser does not support the audio element.
+    </audio>
+
+    <!-- MAIN WINDOW CONTAINER - ADDED ID FOR TARGETING -->
+    <div id="occultPanel" class="w-full max-w-2xl p-6 space-y-6 occult-panel">
+        <h1 class="occult-title-bar">
+            The Echo Division
+        </h1>
+        
+        <!-- The user's image, now round -->
+        <div class="flex justify-center pt-4">
+            <img id="mainSymbol" src="https://i.imgur.com/AUKZncv.png" alt="The Host's Binding Symbol" />
+        </div>
+        
+        <!-- SECTION 1: INPUT AND ACTIVATION -->
+        <div id="inputArea" class="space-y-4">
+            <p class="text-base font-bold" style="color: var(--ritual-red);"> 
+                THE WHISPERING IS GETTING LOUDER. The pact demands a signature.
+            </p>
+            <p class="text-sm" style="color: var(--dark-ink);">
+                Inscribe the KEY onto the required line to initiate the binding. The needle awaits your thread.
+            </p>
+
+            <div class="flex flex-col sm:flex-row gap-4">
+                <input type="text" id="passwordInput" placeholder="The KEY"
+                       class="flex-1 w-full p-4 text-lg outline-none"
+                       oninput="checkPassword()">
+            </div>
+
+            <button id="verifyButton" disabled
+                    class="w-full py-4 px-4 text-xl font-bold transition duration-300 occult-button">
+                SEW THE FINAL STITCH
+            </button>
+            <p id="errorText" class="text-base text-center font-bold hidden" style="color: var(--glyph-glow); text-shadow: 0 0 5px var(--glyph-glow);">
+                &bull; A FRAGMENT BREAKS. THE THREAD REJECTS. &bull;
+            </p>
+        </div>
+
+        <!-- SECTION 2: VIDEO/COUNTDOWN/STATUS AREA (Hidden initially) -->
+        <div id="resultArea" class="hidden space-y-6 pt-4">
+            
+            <!-- TOP STATUS ROW: Live Feed Status -->
+            <div class="flex flex-col gap-6">
+                
+                <!-- LIVE FEED STATUS CONTAINER -->
+                <div id="statusContainer" class="flex-grow text-center">
+                    <h2 id="loadingTitle" class="text-2xl font-bold mb-2 flashing-text">
+                        THE HOST IS BEING PREPARED...
+                    </h2> 
+
+                    <h2 id="trackingTitle" class="text-2xl font-bold mb-2 hidden" style="color: var(--sickly-gold); text-shadow: 0 0 20px var(--glyph-glow);">
+                        THE DOLL ACCEPTS: AWAIT YOUR SUMMONING.
+                    </h2>
+                    
+                    <div class="status-box p-4 text-base">
+                        <p style="color: var(--dark-ink);">
+                            Host Thread ID: <span id="targetCoords" class="font-mono text-white text-lg" style="color: var(--sickly-gold);"></span>
+                        </p>
+                        
+                        <!-- 1. Status during Loading (Initial state) -->
+                        <p id="loadingStatus" class="font-bold mt-1" style="color: var(--dark-ink);">
+                            State: <span id="loadingStatusText">Preparing the Host (Stitching Protocol)...</span>
+                        </p>
+
+                        <!-- 2. Status during Tracking (Hidden until tracking starts) -->
+                        <p id="trackingStatus" class="font-bold mt-1 hidden" style="color: var(--sickly-gold); text-shadow: 0 0 5px var(--glyph-glow);">
+                            State: <span id="trackingStatusText">THE NEEDLE PIERCES. AWAIT THE WAKING.</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LOADING BAR AREA -->
+            <div id="loadingArea" class="flex justify-center flex-col items-center p-4">
+                <h3 class="text-lg mb-3" style="color: var(--dark-ink);">
+                    THREADING THE SOUL TETHER...
+                </h3>
+                <div class="w-full max-w-lg rounded-full h-4 relative overflow-hidden border" 
+                     style="background-color: #000000; border-color: var(--ritual-red);">
+                    <div id="progressBar" class="h-full rounded-full transition-all duration-100" 
+                         style="width: 0%; background-color: var(--ritual-red);"></div>
+                    <span id="progressText" class="absolute inset-0 flex items-center justify-center text-sm font-bold text-white text-shadow-sm">0%</span>
+                </div>
+            </div>
+
+            <!-- COUNTDOWN AND VIDEO AREA -->
+            <div class="flex justify-center flex-col items-center hidden" id="videoArea"> 
+                <div class="text-center mt-4">
+                    <h4 class="text-base text-gray-400 mb-1" style="color: var(--dark-ink);">
+                        SECONDS UNTIL THE HOST AWAKENS
+                    </h4>
+                    <!-- Countdown Display (DD:HH:MM:SS) - Flashing and Unstable -->
+                    <div id="countdownDisplay" class="countdown-unstable flashing-text">--:--:--:--</div>
+                </div>
+
+                <!-- Main Video Feed Player - THE SCAR -->
+                <video id="mainVideoFeed" autoplay loop muted playsinline 
+                       class="rounded-md"
+                       poster="https://placehold.co/600x338/8B0000/FFFFFF?text=THE+SCAR+IS+OPEN"
+                       style="border: 10px solid var(--sickly-gold); box-shadow: 0 0 30px var(--glyph-glow);">
+                    <!-- *** PASTE YOUR PUBLIC VIDEO URL HERE *** -->
+                    <source id="mainVideoSource" src="https://example.com/replace-me/your-live-feed.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                
+                <p class="text-sm mt-3 font-semibold hidden" id="videoErrorText" style="color: var(--glyph-glow);">
+                    WARNING: THE PORTAL IS UNSTABLE. VIDEO FEED SEVERED.
+                </p>
+            </div>
+        </div>
+    </div>
+    <!-- END MAIN WINDOW CONTAINER -->
+    
+    <!-- POPUP MODAL 2: ENDGAME ALERT -->
+    <div id="endgameModal" class="modal-overlay hidden">
+        <div class="occult-panel w-full max-w-lg p-8" style="border-color: white; box-shadow: 0 0 50px white;">
+            <div class="occult-title-bar" style="margin: -32px -32px 20px -32px; background: white; color: black; border-bottom: 2px solid var(--abyssal-black);">
+                <span style="color: black;">&#10008;</span> **THE HOST IS AWAKE**
+            </div>
+            <div class="p-6 text-center space-y-4">
+                <div class="flashing-text text-4xl font-bold" style="animation-duration: 0.1s; color: var(--ritual-red);">
+                    CONSUMMATION
+                </div>
+                
+                <p class="text-xl font-semibold bg-white p-2" style="color: var(--ritual-red);">
+                    The thread is sealed. **Your soul is the new filling.** Welcome to the Toybox.
+                </p>
+                
+                <div class="flex justify-center my-6">
+                    <video id="endgameVideo" autoplay loop muted playsinline 
+                           poster="https://placehold.co/320x180/000000/FFFFFF?text=SIGNAL+LOST"
+                           class="w-full max-w-xs border-5 border-red-600" style="border-radius: 0; box-shadow: 0 0 30px var(--glyph-glow);">
+                        <!-- *** PASTE YOUR FINAL ALERT VIDEO URL HERE *** -->
+                        <source src="https://example.com/replace-me/your-final-alert.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+                
+                <p class="text-base" style="margin-top: 20px; color: var(--dark-ink);">
+                    The Nursery welcomes its newest toy. You cannot leave the crib.
+                </p>
+                
+                <div class="flex justify-center pt-4">
+                    <button id="closeEndgameButton" 
+                            class="py-2 px-6 font-semibold occult-button"
+                            style="background-color: var(--ritual-red); min-width: 150px; color: white;">
+                        JOIN THE PLAY
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- END Modal 2 -->
+
+    <!-- =========================================================================
+     * JAVASCRIPT LOGIC 
+     * ========================================================================= -->
+    <script>
+        // --- CONFIGURATION: EDIT THESE VALUES ---
+        const SECRET_PASSWORD = "LAFOLO"; // The answer to the riddle: DAISY
+        const DEFAULT_VOLUME = 0.4; 
+        const LOADING_DURATION_MS = 2500; 
+        
+        // --- NEW REAL-WORLD DATE CONFIG ---
+        // Set the moment the Host awakens (The Consummation).
+        // Format: YYYY-MM-DDTHH:MM:SS (Using 24-hour time)
+        // Target: December 25, 2025, Midnight (Local Time)
+        const TARGET_DATE_STRING = "2026-05-20T00:00:00"; 
+        // ----------------------------------------
+
+        // Demonic, alchemical, and dark esoteric symbols
+        const GLYPH_CHARS = "⛧ ⛥ ⛦ ⸸ ⚰ ⚸ ⚹ ♰ 🜏 🜍 🜕 🜖 🜗 🝱 🝲 🝳"; 
+
+        const GLYPH_FADE_DURATION_MS = 10000; // 10 seconds for the pulse and fade
+        const GLYPH_SPAWN_INTERVAL_MIN = 3000; // 3 seconds min
+        const GLYPH_SPAWN_INTERVAL_MAX = 7000; // 7 seconds max
+        
+        // GLITCH CONFIG
+        const GLITCH_INTERVAL_MIN = 5000;
+        const GLITCH_INTERVAL_MAX = 10000;
+        const GLITCH_DURATION_MS = 300; // Shorter and faster for higher intensity
+        // ----------------------------------------
+        
+        let countdownInterval;
+        let countdownEndTime; // Will hold the calculated timestamp
+        let glyphSpawnTimeout;
+        let glitchTimeout; // Timer for the glitch loop
+        
+        // UPDATED: Status messages reflecting the Doll/Host theme
+        let loadingStatusMessages = [
+            "Acolyte Signature Verified. The Host's Name is noted.",
+            "The Old Stuffing is replaced. Soul ID extraction commencing...",
+            "The Grand Seam calibrates to your unique frequency.",
+            "Nursery Archive Indexing: PERSONAL_HISTORY/MEMORIES... [98% CORRUPTED]",
+            "THE HOST IS AWAKE. Final preparation for possession."
+        ];
+
+        // DOM REFERENCES
+        const passwordInput = document.getElementById('passwordInput');
+        const verifyButton = document.getElementById('verifyButton');
+        const inputArea = document.getElementById('inputArea');
+        const resultArea = document.getElementById('resultArea');
+        const audioPlayer = document.getElementById('audioPlayer'); 
+        const glyphContainer = document.getElementById('glyphContainer');
+        const glitchOverlay = document.getElementById('glitchOverlay'); // Glitch DOM reference
+        const occultPanel = document.getElementById('occultPanel'); // NEW: Main Panel DOM reference
+
+        // VIDEO ELEMENTS
+        const mainVideoFeed = document.getElementById('mainVideoFeed');
+        const videoErrorText = document.getElementById('videoErrorText');
+        
+        // STATUS & COUNTDOWN REFERENCES
+        const loadingStatus = document.getElementById('loadingStatus'); 
+        const loadingStatusText = document.getElementById('loadingStatusText');
+        const trackingStatus = document.getElementById('trackingStatus'); 
+        const trackingStatusText = document.getElementById('trackingStatusText');
+        const countdownDisplay = document.getElementById('countdownDisplay'); 
+        const targetCoordsText = document.getElementById('targetCoords');
+        
+        // Titles
+        const loadingTitle = document.getElementById('loadingTitle');
+        const trackingTitle = document.getElementById('trackingTitle');
+        const errorText = document.getElementById('errorText');
+
+        // MODALS
+        const endgameModal = document.getElementById('endgameModal'); 
+        const closeEndgameButton = document.getElementById('closeEndgameButton');
+        
+        // Other DOM references
+        const loadingArea = document.getElementById('loadingArea');
+        const progressBar = document.getElementById('progressBar');
+        const progressText = document.getElementById('progressText');
+        const videoArea = document.getElementById('videoArea');
+
+        // =========================================================================
+        // DYNAMIC GLYPH SYSTEM
+        // =========================================================================
+        
+        /**
+         * Gets a random character from the defined GLYPH_CHARS string.
+         * @returns {string} A single esoteric character.
+         */
+        function getRandomGlyph() {
+            // Split by space to get individual symbols
+            const chars = GLYPH_CHARS.split(/\s+/).filter(c => c.length > 0);
+            return chars[Math.floor(Math.random() * chars.length)];
+        }
+
+        /**
+         * Spawns a single, ephemeral, pulsating glyph in the background.
+         */
+        function spawnGlyph() {
+            if (!glyphContainer) return;
+
+            const glyph = document.createElement('div');
+            glyph.textContent = getRandomGlyph();
+            glyph.className = 'dynamic-glyph';
+
+            // Random positioning (0% to 100% viewport width/height)
+            const x = Math.random() * 100; 
+            const y = Math.random() * 100;
+            
+            // Random size and rotation for variety
+            const size = Math.random() * 4 + 4; // 4vw to 8vw
+            const rotation = Math.random() * 360; // 0 to 360 degrees
+
+            glyph.style.left = `${x}vw`;
+            glyph.style.top = `${y}vh`;
+            glyph.style.fontSize = `${size}vw`;
+            glyph.style.transform = `rotate(${rotation}deg)`;
+            
+            // Randomize animation duration slightly
+            const animDuration = GLYPH_FADE_DURATION_MS + (Math.random() * 2000 - 1000); // +/- 1s
+            glyph.style.animationDuration = `${animDuration / 1000}s`;
+
+            glyphContainer.appendChild(glyph);
+
+            // Set a timeout to remove the glyph once its animation has finished
+            setTimeout(() => {
+                if (glyphContainer && glyph.parentNode) {
+                    glyphContainer.removeChild(glyph);
+                }
+            }, animDuration + 100); 
+        }
+
+        /**
+         * Starts the loop for spawning glyphs at random intervals.
+         */
+        function startGlyphSpawnerLoop() {
+            const nextInterval = Math.random() * (GLYPH_SPAWN_INTERVAL_MAX - GLYPH_SPAWN_INTERVAL_MIN) + GLYPH_SPAWN_INTERVAL_MIN;
+
+            // Spawn one immediately if this is the first call, or loop after the calculated delay
+            glyphSpawnTimeout = setTimeout(() => {
+                spawnGlyph(); 
+                startGlyphSpawnerLoop(); // Loop the spawner
+            }, nextInterval);
+        }
+        
+        /**
+         * Clears all dynamic glyphs and stops the spawner loop.
+         */
+        function stopGlyphSpawnerLoop() {
+            clearTimeout(glyphSpawnTimeout);
+            if (glyphContainer) {
+                while (glyphContainer.firstChild) {
+                    glyphContainer.removeChild(glyphContainer.firstChild);
+                }
+            }
+        }
+        
+        // =========================================================================
+        // RIFT GLITCH SYSTEM
+        // =========================================================================
+
+        /**
+         * Triggers a single screen glitch effect and schedules the next one.
+         */
+        function triggerGlitch() {
+            if (!glitchOverlay || !occultPanel) return;
+            
+            // 1. Activate the glitch class on the OVERLAY
+            glitchOverlay.classList.add('glitch-active');
+            
+            // 2. Activate the corruption class on the PANEL (The new twisting effect)
+            occultPanel.classList.add('panel-corrupt');
+
+            // 3. Remove the classes after the animation duration (GLITCH_DURATION_MS)
+            setTimeout(() => {
+                glitchOverlay.classList.remove('glitch-active');
+                occultPanel.classList.remove('panel-corrupt');
+            }, GLITCH_DURATION_MS);
+            
+            // 4. Set up the next glitch
+            scheduleNextGlitch();
+        }
+
+        /**
+         * Schedules the next glitch at a random interval (5-10 seconds).
+         */
+        function scheduleNextGlitch() {
+            const nextInterval = Math.random() * (GLITCH_INTERVAL_MAX - GLITCH_INTERVAL_MIN) + GLITCH_INTERVAL_MIN;
+            glitchTimeout = setTimeout(triggerGlitch, nextInterval);
+        }
+        
+        /**
+         * Stops the repeating glitch timer.
+         */
+        function stopGlitchEffect() {
+            clearTimeout(glitchTimeout);
+        }
+
+        // =========================================================================
+        // CORE FUNCTIONS
+        // =========================================================================
+
+        /**
+         * Checks the input value against the secret password.
+         */
+        function checkPassword() {
+            try {
+                if (!passwordInput || !verifyButton) return;
+                
+                const inputPasswordUpperCase = passwordInput.value.trim().toUpperCase();
+                
+                if (inputPasswordUpperCase === SECRET_PASSWORD) {
+                    verifyButton.disabled = false;
+                    verifyButton.onclick = triggerInitialActivation; 
+                    errorText.classList.add('hidden');
+                } else {
+                    verifyButton.disabled = true;
+                    if (passwordInput.value.length >= 2) {
+                         errorText.classList.remove('hidden');
+                    } else {
+                         errorText.classList.add('hidden');
+                    }
+                }
+            } catch (error) {
+                verifyButton.disabled = true;
+                console.error("Password check error:", error);
+            }
+        }
+        
+        /**
+         * Formats milliseconds into DD:HH:MM:SS string.
+         */
+        function formatTime(ms) {
+            if (ms < 0) ms = 0;
+            const totalSeconds = Math.floor(ms / 1000);
+
+            const days = String(Math.floor(totalSeconds / (3600 * 24))).padStart(2, '0');
+            const hours = String(Math.floor((totalSeconds % (3600 * 24)) / 3600)).padStart(2, '0');
+            const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
+            const seconds = String(Math.floor(totalSeconds % 60)).padStart(2, '0');
+
+            return `${days}:${hours}:${minutes}:${seconds}`;
+        }
+
+        /**
+         * Starts the real-world date countdown timer.
+         */
+        function startRealWorldCountdown() {
+            updateCountdown(); 
+            // 100ms interval for high-frequency updates and creepy time flicker
+            countdownInterval = setInterval(updateCountdown, 100); 
+        }
+
+        /**
+         * Updates the countdown display every 100ms.
+         */
+        function updateCountdown() {
+            const timeRemaining = countdownEndTime - Date.now();
+            countdownDisplay.textContent = formatTime(timeRemaining);
+            
+            // Add creepy volume fluctuation for instability
+            const randomChange = (Math.random() * 0.2) - 0.1; 
+            let newVolume = DEFAULT_VOLUME + randomChange;
+            newVolume = Math.max(0.2, Math.min(0.7, newVolume));
+            audioPlayer.volume = newVolume;
+
+            if (timeRemaining <= 0) {
+                clearInterval(countdownInterval);
+                showEndgameModal();
+            }
+        }
+        
+        /**
+         * Called when the countdown hits zero. Stops all processes and shows the final alert.
+         */
+        function showEndgameModal() {
+            clearInterval(countdownInterval);
+            stopGlyphSpawnerLoop(); // Stop glyph spawning
+            stopGlitchEffect();     // Stop the glitch effect
+            audioPlayer.pause();
+            
+            trackingStatusText.textContent = "THE WICK IS TRIMMED. WELCOME TO THE TOYBOX.";
+            
+            endgameModal.classList.remove('hidden');
+            document.getElementById('endgameVideo').play().catch(e => console.warn("Endgame video failed to play.", e));
+        }
+
+        /**
+         * Starts the loading bar animation and sets a timeout to start the main sequence.
+         */
+        function startLoadingBar() {
+            loadingArea.classList.remove('hidden');
+            videoArea.classList.add('hidden');
+            
+            trackingStatus.classList.add('hidden'); 
+            loadingStatus.classList.remove('hidden'); 
+            
+            loadingTitle.classList.remove('hidden'); 
+            trackingTitle.classList.add('hidden');   
+            
+            let progress = 0;
+            progressBar.style.width = '0%';
+            progressText.textContent = '0%';
+            
+            const totalTime = LOADING_DURATION_MS;
+            const intervalTime = 100; 
+            const steps = totalTime / intervalTime;
+            let currentStep = 0;
+
+            const loadingInterval = setInterval(() => {
+                currentStep++;
+                if (currentStep <= steps) {
+                    progress = Math.round((currentStep / steps) * 100);
+                    
+                    if (progress < 20) {
+                        loadingStatusText.textContent = loadingStatusMessages[0];
+                    } else if (progress >= 20 && progress < 40) {
+                        loadingStatusText.textContent = loadingStatusMessages[1];
+                    } else if (progress >= 40 && progress < 60) {
+                        loadingStatusText.textContent = loadingStatusMessages[2];
+                    } else if (progress >= 60 && progress < 80) {
+                        loadingStatusText.textContent = loadingStatusMessages[3];
+                    } else if (progress >= 80 && progress < 100) {
+                        loadingStatusText.textContent = loadingStatusMessages[4];
+                    }
+                    
+                    progressBar.style.width = `${progress}%`;
+                    progressText.textContent = `${progress}%`;
+
+                    if (currentStep >= steps) {
+                         clearInterval(loadingInterval);
+                         startTrackingSequence(); 
+                    }
+                }
+            }, intervalTime);
+        }
+
+        /**
+         * Initiates the sequence after the correct password is entered.
+         */
+        function triggerInitialActivation() {
+            // Start the unsettling background effect immediately
+            startGlyphSpawnerLoop();
+            scheduleNextGlitch(); // Make sure glitches start on activation
+
+            // 1. Play the creepy audio 
+            audioPlayer.volume = DEFAULT_VOLUME;
+            audioPlayer.loop = true; 
+            audioPlayer.play().catch(error => {
+                console.error("Main audio autoplay failed. Check if user interaction is needed.", error);
+            });
+            
+            // 2. Update UI state 
+            inputArea.classList.add('hidden');
+            resultArea.classList.remove('hidden');
+            // Changed ID generation to reflect a "thread" or "stitch" ID
+            targetCoordsText.textContent = "THRD:" + Array.from({length: 8}, () => Math.random().toString(36)[2]).join('').toUpperCase();
+
+            // 3. Start the loading sequence
+            startLoadingBar();
+        }
+
+
+        /**
+         * Starts the main video and the real-world date countdown.
+         */
+        function startTrackingSequence() { 
+            // 1. Hide loading bar and status
+            loadingArea.classList.add('hidden');
+            loadingStatus.classList.add('hidden'); 
+            
+            // 2. Show the video area and the tracking status
+            videoArea.classList.remove('hidden');
+            trackingStatus.classList.remove('hidden'); 
+            
+            loadingTitle.classList.add('hidden');    
+            trackingTitle.classList.remove('hidden'); 
+            
+            // 3. Start main video playback
+            mainVideoFeed.play().catch(e => {
+                console.warn("Main video autoplay failed. Showing error message.", e);
+                videoErrorText.classList.remove('hidden'); 
+            });
+
+            // 4. Start the active countdown
+            startRealWorldCountdown();
+        }
+        
+        // =========================================================================
+        // EVENT LISTENERS
+        // =========================================================================
+
+        audioPlayer.addEventListener('error', (e) => {
+             console.error("Audio network error detected. File link inaccessible.", e);
+        });
+        
+        mainVideoFeed.addEventListener('error', (e) => {
+            console.error("Main video error: Check file path and format.", e);
+            videoErrorText.classList.remove('hidden');
+        });
+
+        closeEndgameButton.onclick = () => {
+            endgameModal.classList.add('hidden');
+        };
+
+        // Initial setup
+        window.onload = () => {
+            // Calculate the target time based on the string defined in CONFIG
+            countdownEndTime = new Date(TARGET_DATE_STRING).getTime();
+
+            // Display the initial time remaining immediately
+            countdownDisplay.textContent = formatTime(countdownEndTime - Date.now());
+
+            checkPassword(); 
+            audioPlayer.load();
+            mainVideoFeed.load();
+            
+            // Start ambient effects immediately
+            spawnGlyph(); 
+            startGlyphSpawnerLoop();
+            
+            // Start the rift glitch effect
+            scheduleNextGlitch();
+        };
+    </script>
+</body>
+</html>
