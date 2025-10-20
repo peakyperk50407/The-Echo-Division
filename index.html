@@ -312,7 +312,7 @@
         
         <!-- The user's image, now round -->
         <div class="flex justify-center pt-4">
-            <img id="mainSymbol" src="https://i.imgur.com/0GAQkVd.png" alt="The Host's Binding Symbol" />
+            <img id="mainSymbol" src="https://i.imgur.com/AUKZncv.png" alt="The Host's Binding Symbol" />
         </div>
         
         <!-- SECTION 1: INPUT AND ACTIVATION -->
@@ -397,12 +397,9 @@
                 </div>
 
                 <!-- Main Video Feed Player - THE SCAR -->
-                <video id="mainVideoFeed" autoplay loop muted playsinline 
+                <video id="mainVideoFeed" loop muted playsinline controls
                        class="rounded-md"
-                       poster="https://placehold.co/600x338/8B0000/FFFFFF?text=THE+SCAR+IS+OPEN"
-                       style="border: 10px solid var(--sickly-gold); box-shadow: 0 0 30px var(--glyph-glow);">
-                    <!-- *** FIX APPLIED: REPLACED PLACEHOLDER WITH A DIRECT DROPBOX LINK EXAMPLE *** -->
-                    <!-- The URL must end with `dl=1` or have the direct-access parameter for your host. -->
+                       style="border: 10px solid var(--sickly-gold); box-shadow: 0 0 30px var(--glyph-glow); background-color: black;">
                     <source id="mainVideoSource" src="https://www.dropbox.com/scl/fi/i0ccb5q6fdgwevp8cy2nz/ARG-video.mp4?rlkey=gfn6df819batrwe9xgfpnutbq&st=uvzs5axp&dl=1" type="video/mp4">
                     Your browser does not support the video tag.
                 </video>
@@ -431,10 +428,9 @@
                 </p>
                 
                 <div class="flex justify-center my-6">
-                    <video id="endgameVideo" autoplay loop muted playsinline 
-                           poster="https://placehold.co/320x180/000000/FFFFFF?text=SIGNAL+LOST"
+                    <!-- Endgame Video -->
+                    <video id="endgameVideo" loop muted playsinline controls
                            class="w-full max-w-xs border-5 border-red-600" style="border-radius: 0; box-shadow: 0 0 30px var(--glyph-glow);">
-                        <!-- The original Dropbox link, confirmed to be in a direct access format (ends in &dl=1) -->
                         <source src="https://www.dropbox.com/scl/fi/i0ccb5q6fdgwevp8cy2nz/ARG-video.mp4?rlkey=gfn6df819batrwe9xgfpnutbq&st=uvzs5axp&dl=1" type="video/mp4">
                         Your browser does not support the video tag.
                     </video>
@@ -739,6 +735,7 @@
             trackingStatusText.textContent = "THE WICK IS TRIMMED. WELCOME TO THE TOYBOX.";
             
             endgameModal.classList.remove('hidden');
+            // Ensure play is called on user interaction for mobile compatibility
             document.getElementById('endgameVideo').play().catch(e => console.warn("Endgame video failed to play.", e));
         }
 
@@ -794,6 +791,7 @@
 
         /**
          * Initiates the sequence after the correct password is entered.
+         * The audio player play call is here, directly tied to the user's click gesture.
          */
         function triggerInitialActivation() {
             // Start the unsettling background effect immediately
@@ -803,8 +801,12 @@
             // 1. Play the creepy audio 
             audioPlayer.volume = DEFAULT_VOLUME;
             audioPlayer.loop = true; 
-            audioPlayer.play().catch(error => {
-                console.error("Main audio autoplay failed. Check if user interaction is needed.", error);
+            audioPlayer.play().then(() => {
+                console.log("Audio playback successfully initiated.");
+            }).catch(error => {
+                // NEW: Explicitly log the error name for better debugging
+                console.error(`Audio Playback Failed (${error.name}): The browser prevented audio playback.`, error.message);
+                // Note: The app proceeds even if audio fails, as video is often the main required component.
             });
             
             // 2. Update UI state 
@@ -834,6 +836,7 @@
             trackingTitle.classList.remove('hidden'); 
             
             // 3. Start main video playback
+            // This explicit .play() call should be honored since the user clicked the button
             mainVideoFeed.play().catch(e => {
                 console.warn("Main video autoplay failed. Showing error message.", e);
                 videoErrorText.classList.remove('hidden'); 
