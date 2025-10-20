@@ -230,14 +230,24 @@
         
         /* Countdown Display - The Bleeding Clock */
         #countdownDisplay {
-            font-size: 4rem; 
+            /* FIX: Use vw for fluid scaling on small screens */
+            font-size: 8vw; 
             font-weight: 700;
             color: var(--sickly-gold);
             text-shadow: 0 0 15px var(--glyph-glow), 0 0 30px var(--sickly-gold); 
-            letter-spacing: 0.2em; 
+            letter-spacing: 0.1em; /* Reduced spacing for mobile fit */
             padding: 10px 0;
             line-height: 1;
         }
+        
+        /* Revert to fixed font size on tablet/desktop (min-width: 640px) */
+        @media (min-width: 640px) { 
+            #countdownDisplay {
+                font-size: 4rem; 
+                letter-spacing: 0.2em; /* Restore original spacing for larger screens */
+            }
+        }
+
 
         /* Countdown shake/instability */
         @keyframes slight-shake {
