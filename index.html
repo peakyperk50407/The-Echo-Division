@@ -312,7 +312,7 @@
         
         <!-- The user's image, now round -->
         <div class="flex justify-center pt-4">
-            <img id="mainSymbol" src="https://i.imgur.com/AUKZncv.png" alt="The Host's Binding Symbol" />
+            <img id="mainSymbol" src="https://i.imgur.com/0GAQkVd.png" alt="The Host's Binding Symbol" />
         </div>
         
         <!-- SECTION 1: INPUT AND ACTIVATION -->
@@ -401,8 +401,9 @@
                        class="rounded-md"
                        poster="https://placehold.co/600x338/8B0000/FFFFFF?text=THE+SCAR+IS+OPEN"
                        style="border: 10px solid var(--sickly-gold); box-shadow: 0 0 30px var(--glyph-glow);">
-                    <!-- *** PASTE YOUR PUBLIC VIDEO URL HERE *** -->
-                    <source id="mainVideoSource" src="https://example.com/replace-me/your-live-feed.mp4" type="video/mp4">
+                    <!-- *** FIX APPLIED: REPLACED PLACEHOLDER WITH A DIRECT DROPBOX LINK EXAMPLE *** -->
+                    <!-- The URL must end with `dl=1` or have the direct-access parameter for your host. -->
+                    <source id="mainVideoSource" src="https://www.dropbox.com/scl/fi/i0ccb5q6fdgwevp8cy2nz/ARG-video.mp4?rlkey=gfn6df819batrwe9xgfpnutbq&st=uvzs5axp&dl=1" type="video/mp4">
                     Your browser does not support the video tag.
                 </video>
                 
@@ -433,8 +434,8 @@
                     <video id="endgameVideo" autoplay loop muted playsinline 
                            poster="https://placehold.co/320x180/000000/FFFFFF?text=SIGNAL+LOST"
                            class="w-full max-w-xs border-5 border-red-600" style="border-radius: 0; box-shadow: 0 0 30px var(--glyph-glow);">
-                        <!-- *** PASTE YOUR FINAL ALERT VIDEO URL HERE *** -->
-                        <source src="https://example.com/replace-me/your-final-alert.mp4" type="video/mp4">
+                        <!-- The original Dropbox link, confirmed to be in a direct access format (ends in &dl=1) -->
+                        <source src="https://www.dropbox.com/scl/fi/i0ccb5q6fdgwevp8cy2nz/ARG-video.mp4?rlkey=gfn6df819batrwe9xgfpnutbq&st=uvzs5axp&dl=1" type="video/mp4">
                         Your browser does not support the video tag.
                     </video>
                 </div>
@@ -852,6 +853,8 @@
         
         mainVideoFeed.addEventListener('error', (e) => {
             console.error("Main video error: Check file path and format.", e);
+            // Only show the error text if we fail to play after the initial attempt.
+            if (resultArea.classList.contains('hidden')) return;
             videoErrorText.classList.remove('hidden');
         });
 
