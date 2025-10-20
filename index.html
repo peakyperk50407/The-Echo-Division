@@ -837,6 +837,13 @@
                 videoErrorText.classList.remove('hidden'); 
             });
 
+            // FIX: Explicitly ensure the background audio continues to play
+            // This step re-asserts the playback status immediately after the video attempt,
+            // preventing the browser from prematurely pausing the audio.
+            audioPlayer.play().catch(error => {
+                console.error("Failed to resume background audio after video attempt.", error);
+            });
+
             // 4. Start the active countdown
             startRealWorldCountdown();
         }
@@ -882,4 +889,3 @@
     </script>
 </body>
 </html>
-
