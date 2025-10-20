@@ -396,7 +396,7 @@
                     <div id="countdownDisplay" class="countdown-unstable flashing-text">--:--:--:--</div>
                 </div>
 
-                <!-- Main Video Feed Player - THE SCAR -->
+                <!-- Main Video Feed Player - THE SCAR (Removed autoplay) -->
                 <video id="mainVideoFeed" loop muted playsinline controls
                        class="rounded-md"
                        style="border: 10px solid var(--sickly-gold); box-shadow: 0 0 30px var(--glyph-glow); background-color: black;">
@@ -428,7 +428,7 @@
                 </p>
                 
                 <div class="flex justify-center my-6">
-                    <!-- Endgame Video -->
+                    <!-- Endgame Video (Removed autoplay) -->
                     <video id="endgameVideo" loop muted playsinline controls
                            class="w-full max-w-xs border-5 border-red-600" style="border-radius: 0; box-shadow: 0 0 30px var(--glyph-glow);">
                         <source src="https://www.dropbox.com/scl/fi/i0ccb5q6fdgwevp8cy2nz/ARG-video.mp4?rlkey=gfn6df819batrwe9xgfpnutbq&st=uvzs5axp&dl=1" type="video/mp4">
@@ -791,7 +791,6 @@
 
         /**
          * Initiates the sequence after the correct password is entered.
-         * The audio player play call is here, directly tied to the user's click gesture.
          */
         function triggerInitialActivation() {
             // Start the unsettling background effect immediately
@@ -801,12 +800,8 @@
             // 1. Play the creepy audio 
             audioPlayer.volume = DEFAULT_VOLUME;
             audioPlayer.loop = true; 
-            audioPlayer.play().then(() => {
-                console.log("Audio playback successfully initiated.");
-            }).catch(error => {
-                // NEW: Explicitly log the error name for better debugging
-                console.error(`Audio Playback Failed (${error.name}): The browser prevented audio playback.`, error.message);
-                // Note: The app proceeds even if audio fails, as video is often the main required component.
+            audioPlayer.play().catch(error => {
+                console.error("Main audio autoplay failed. Check if user interaction is needed.", error);
             });
             
             // 2. Update UI state 
