@@ -6,6 +6,12 @@
     <title>THE RITUAL OF THE WICKED HOST - SOUL STITCH</title>
     <!-- Load Tailwind CSS --><script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- 
+        NOTE: Tone.js has been removed. The custom sound is now handled by 
+        the <audio> element added below the <body> tag.
+    -->
+    
     <style>
         /* =========================================================================
          * STYLING & AESTHETICS (Active Forbidden Ritual)
@@ -285,6 +291,9 @@
 </head>
 <body class="p-4 md:p-8 flex items-start justify-center">
 
+    <!-- AMBIENT AUDIO SOURCE: Replaced Tone.js with the custom MP3 loop -->
+    <audio id="ambientAudio" loop preload="auto" src="https://res.cloudinary.com/dv6jfgesm/video/upload/v1760435544/Creepy_Little_Girl_Laughing_Giggling_Scary_Horror_Sound_Effect_creepylaughing_scarysound_azo3hd.mp3"></audio>
+
     <!-- GLYPH CONTAINER: This is where the JS will spawn the animated symbols -->
     <div id="glyphContainer" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%;"></div>
     
@@ -294,8 +303,6 @@
     <!-- MIST/HAZE OVERLAY -->
     <div id="mistOverlay"></div>
     
-    <!-- NOTE: Removed the separate audioPlayer to use the video's native audio feed. -->
-
     <!-- MAIN WINDOW CONTAINER -->
     <div id="occultPanel" class="w-full max-w-2xl p-6 space-y-6 occult-panel">
         <h1 class="occult-title-bar">
@@ -392,13 +399,13 @@
                 <video id="mainVideoFeed" loop playsinline controls
                        class="rounded-md"
                        style="border: 10px solid var(--sickly-gold); box-shadow: 0 0 30px var(--glyph-glow); background-color: black;">
-                    <!-- NOTE: 'muted' has been removed to allow default sound. -->
+                    <!-- 'muted' is removed for default sound, requiring user tap to start both video and audio. -->
                     <source id="mainVideoSource" src="https://www.dropbox.com/scl/fi/i0ccb5q6fdgwevp8cy2nz/ARG-video.mp4?rlkey=gfn6df819batrwe9xgfpnutbq&st=uvzs5axp&dl=1" type="video/mp4">
                     Your browser does not support the video tag.
                 </video>
                 
                 <p class="text-sm mt-3 font-semibold text-center" id="videoInstruction" style="color: var(--sickly-gold); text-shadow: 0 0 5px var(--glyph-glow);">
-                    WARNING: The doll watches your every move.
+                    WARNING: **TAP THE VIDEO SCREEN** to start the Feed (This will silence the ambient sound).
                 </p>
 
                 <p class="text-sm mt-3 font-semibold hidden" id="videoErrorText" style="color: var(--glyph-glow);">
@@ -478,11 +485,18 @@
         let glyphSpawnTimeout;
         let glitchTimeout; 
         
+        // =========================================================================
+        // --- AUDIO ZONE 2: AUDIO ELEMENT REFERENCE ---
+        // This variable holds the reference to the custom HTML <audio> element.
+        // =========================================================================
+        const ambientAudio = document.getElementById('ambientAudio');
+        // =========================================================================
+        
         let loadingStatusMessages = [
             "Acolyte Signature Verified. The Host's Name is noted.",
             "The Old Stuffing is replaced. Soul ID extraction commencing...",
             "The Grand Seam calibrates to your unique frequency.",
-            "Nursery Archive Indexing: PERSONAL_HISTORY/MEMORIES... [98% CORRUPTED]",
+            "Nursery Archive IndexING: PERSONAL_HISTORY/MEMORIES... [98% CORRUPTED]",
             "THE HOST IS AWAKE. Final preparation for possession."
         ];
 
@@ -523,6 +537,33 @@
         const progressText = document.getElementById('progressText');
         const videoArea = document.getElementById('videoArea');
 
+        // =========================================================================
+        // --- AUDIO ZONE 3: START AUDIO FUNCTION (Using HTML Audio) ---
+        // This now uses the native .play() method on the ambientAudio element.
+        // =========================================================================
+        function startAudioLoop() {
+            if (ambientAudio) {
+                // Set volume lower for ambience (optional, but good for scary loops)
+                ambientAudio.volume = 0.5; 
+                ambientAudio.play().catch(error => {
+                    console.warn("Ambient audio failed to play automatically. User interaction needed.", error);
+                });
+                console.log("Custom ambient sound started.");
+            }
+        }
+
+        // =========================================================================
+        // --- AUDIO ZONE 4: STOP AUDIO FUNCTION (Using HTML Audio) ---
+        // This now uses the native .pause() method on the ambientAudio element.
+        // =========================================================================
+        function stopAudioLoop() {
+            if (ambientAudio) {
+                ambientAudio.pause();
+                ambientAudio.currentTime = 0; // Reset the loop position for next time
+                console.log("Custom ambient sound stopped.");
+            }
+        }
+        
         // =========================================================================
         // DYNAMIC GLYPH SYSTEM
         // =========================================================================
@@ -659,8 +700,6 @@
             const timeRemaining = countdownEndTime - Date.now();
             countdownDisplay.textContent = formatTime(timeRemaining);
             
-            // NOTE: Volume fluctuation logic removed as background audio is removed.
-
             if (timeRemaining <= 0) {
                 clearInterval(countdownInterval);
                 showEndgameModal();
@@ -672,6 +711,13 @@
             stopGlyphSpawnerLoop(); 
             stopGlitchEffect();     
             
+            // =========================================================================
+            // --- AUDIO ZONE 5: STOP AUDIO CALL (Endgame) ---
+            // Stops the background audio if the countdown reaches zero.
+            // =========================================================================
+            stopAudioLoop(); 
+            // =========================================================================
+
             // Try to pause the main video if it was playing
             mainVideoFeed.pause();
 
@@ -733,6 +779,13 @@
             startGlyphSpawnerLoop();
             scheduleNextGlitch(); 
             
+            // =========================================================================
+            // --- AUDIO ZONE 6: START AUDIO CALL (Initial Activation) ---
+            // This starts the custom MP3 loop right after the user provides the password.
+            // =========================================================================
+            startAudioLoop(); 
+            // =========================================================================
+
             // 1. Update UI state 
             inputArea.classList.add('hidden');
             resultArea.classList.remove('hidden');
@@ -772,11 +825,18 @@
             videoInstruction.classList.add('hidden');
         });
         
-        // Hide instruction once the user successfully plays the video
+        // =========================================================================
+        // --- AUDIO ZONE 7: STOP AUDIO CALL (Video Play) ---
+        // This is the critical line: stops the ambient sound when the user 
+        // successfully plays the video (which requires user interaction).
+        // =========================================================================
         mainVideoFeed.addEventListener('play', () => {
+            stopAudioLoop(); 
             videoInstruction.classList.add('hidden');
             videoErrorText.classList.add('hidden');
         });
+        // =========================================================================
+
 
         closeEndgameButton.onclick = () => {
             endgameModal.classList.add('hidden');
