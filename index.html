@@ -7,11 +7,6 @@
     <!-- Load Tailwind CSS --><script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;600;700&display=swap" rel="stylesheet">
     
-    <!-- 
-        NOTE: Tone.js has been removed. The custom sound is now handled by 
-        the <audio> element added below the <body> tag.
-    -->
-    
     <style>
         /* =========================================================================
          * STYLING & AESTHETICS (Active Forbidden Ritual)
@@ -29,8 +24,7 @@
             font-family: 'Crimson Text', Georgia, serif; 
             background-color: var(--abyssal-black);
             color: var(--dark-ink); 
-            min-height: 100vh;
-            padding-bottom: 40px; 
+            /* min-height: 100vh is now handled by Tailwind's min-h-screen class */
         }
 
         /* ------------------------------------------------------------- 
@@ -253,18 +247,6 @@
             animation: slight-shake 0.1s infinite alternate; 
         }
 
-        /* Video element styling */
-        #mainVideoFeed {
-            width: 100%;
-            max-width: 600px;
-            aspect-ratio: 16 / 9; 
-            border: 10px solid var(--sickly-gold); 
-            border-radius: 0;
-            box-shadow: 0 0 30px var(--glyph-glow); 
-            background-color: black;
-            margin-top: 20px;
-        }
-
         /* Custom Symbol Styling */
         #mainSymbol {
             width: 80px;
@@ -287,135 +269,166 @@
             align-items: center;
             justify-content: center;
         }
+        
+        /* Styling for the new link - Enhanced to be more obvious */
+        #dollsCallingLink {
+            /* New Default look: Ritual Red background, Sickly Gold text/border */
+            background: var(--ritual-red); 
+            border: 3px solid var(--sickly-gold) !important;
+            box-shadow: 0 0 30px var(--glyph-glow) !important;
+            color: var(--sickly-gold) !important; 
+            text-shadow: 0 0 5px black; /* Give text some lift */
+        }
+        
+        #dollsCallingLink:hover {
+            color: white !important; 
+            background: #a30000; /* slightly darker red on hover */
+            box-shadow: 0 0 40px var(--sickly-gold) !important; 
+        }
     </style>
 </head>
-<body class="p-4 md:p-8 flex items-start justify-center">
+<!-- UPDATED BODY CLASS for Sticky Footer: min-h-screen, flex-col -->
+<body class="p-4 md:p-8 flex flex-col items-center min-h-screen">
 
-    <!-- AMBIENT AUDIO SOURCE: Replaced Tone.js with the custom MP3 loop -->
+    <!-- AMBIENT AUDIO SOURCE -->
     <audio id="ambientAudio" loop preload="auto" src="https://res.cloudinary.com/dv6jfgesm/video/upload/v1760435544/Creepy_Little_Girl_Laughing_Giggling_Scary_Horror_Sound_Effect_creepylaughing_scarysound_azo3hd.mp3"></audio>
 
-    <!-- GLYPH CONTAINER: This is where the JS will spawn the animated symbols -->
+    <!-- GLYPH CONTAINER -->
     <div id="glyphContainer" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%;"></div>
     
-    <!-- GLITCH OVERLAY: NEW ELEMENT FOR RIFT INSTABILITY -->
+    <!-- GLITCH OVERLAY -->
     <div id="glitchOverlay"></div>
 
     <!-- MIST/HAZE OVERLAY -->
     <div id="mistOverlay"></div>
     
-    <!-- MAIN WINDOW CONTAINER -->
-    <div id="occultPanel" class="w-full max-w-2xl p-6 space-y-6 occult-panel">
-        <h1 class="occult-title-bar">
-            The Echo Division
-        </h1>
+    <!-- MAIN CONTENT WRAPPER: Takes all available vertical space (flex-grow) -->
+    <main class="flex-grow w-full flex justify-center mb-8"> 
         
-        <!-- The user's image, now round -->
-        <div class="flex justify-center pt-4">
-            <img id="mainSymbol" src="https://i.imgur.com/0GAQkVd.png" alt="The Host's Binding Symbol" />
-        </div>
-        
-        <!-- SECTION 1: INPUT AND ACTIVATION -->
-        <div id="inputArea" class="space-y-4">
-            <p class="text-base font-bold" style="color: var(--ritual-red);"> 
-                THE WHISPERING IS GETTING LOUDER. The pact demands a signature.
-            </p>
-            <p class="text-sm" style="color: var(--dark-ink);">
-                Inscribe the KEY onto the required line to initiate the binding. The needle awaits your thread.
-            </p>
+        <!-- MAIN WINDOW CONTAINER -->
+        <div id="occultPanel" class="w-full max-w-2xl p-6 space-y-6 occult-panel">
+            <h1 class="occult-title-bar">
+                The Echo Division
+            </h1>
+            
+            <!-- The user's image, now round -->
+            <div class="flex justify-center pt-4">
+                <img id="mainSymbol" src="https://i.imgur.com/0GAQkVd.png" alt="The Host's Binding Symbol" />
+            </div>
+            
+            <!-- SECTION 1: INPUT AND ACTIVATION -->
+            <div id="inputArea" class="space-y-4">
+                <p class="text-base font-bold" style="color: var(--ritual-red);"> 
+                    THE WHISPERING IS GETTING LOUDER. The pact demands a signature.
+                </p>
+                <p class="text-sm" style="color: var(--dark-ink);">
+                    Inscribe the KEY onto the required line to initiate the binding. The needle awaits your thread.
+                </p>
 
-            <div class="flex flex-col sm:flex-row gap-4">
-                <input type="text" id="passwordInput" placeholder="The KEY"
-                       class="flex-1 w-full p-4 text-lg outline-none"
-                       oninput="checkPassword()">
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <input type="text" id="passwordInput" placeholder="The KEY"
+                        class="flex-1 w-full p-4 text-lg outline-none"
+                        oninput="checkPassword()">
+                </div>
+
+                <button id="verifyButton" disabled
+                        class="w-full py-4 px-4 text-xl font-bold transition duration-300 occult-button">
+                    SEW THE FINAL STITCH
+                </button>
+                <p id="errorText" class="text-base text-center font-bold hidden" style="color: var(--glyph-glow); text-shadow: 0 0 5px var(--glyph-glow);">
+                    &bull; A FRAGMENT BREAKS. THE THREAD REJECTS. &bull;
+                </p>
             </div>
 
-            <button id="verifyButton" disabled
-                    class="w-full py-4 px-4 text-xl font-bold transition duration-300 occult-button">
-                SEW THE FINAL STITCH
-            </button>
-            <p id="errorText" class="text-base text-center font-bold hidden" style="color: var(--glyph-glow); text-shadow: 0 0 5px var(--glyph-glow);">
-                &bull; A FRAGMENT BREAKS. THE THREAD REJECTS. &bull;
-            </p>
-        </div>
-
-        <!-- SECTION 2: VIDEO/COUNTDOWN/STATUS AREA (Hidden initially) -->
-        <div id="resultArea" class="hidden space-y-6 pt-4">
-            
-            <!-- TOP STATUS ROW: Live Feed Status -->
-            <div class="flex flex-col gap-6">
+            <!-- SECTION 2: COUNTDOWN/LINK AREA (Hidden initially) -->
+            <div id="resultArea" class="hidden space-y-6 pt-4">
                 
-                <!-- LIVE FEED STATUS CONTAINER -->
-                <div id="statusContainer" class="flex-grow text-center">
-                    <h2 id="loadingTitle" class="text-2xl font-bold mb-2 flashing-text">
-                        THE HOST IS BEING PREPARED...
-                    </h2> 
-
-                    <h2 id="trackingTitle" class="text-2xl font-bold mb-2 hidden" style="color: var(--sickly-gold); text-shadow: 0 0 20px var(--glyph-glow);">
-                        THE DOLL ACCEPTS: AWAIT YOUR SUMMONING.
-                    </h2>
+                <!-- TOP STATUS ROW: Live Feed Status -->
+                <div class="flex flex-col gap-6">
                     
-                    <div class="status-box p-4 text-base">
-                        <p style="color: var(--dark-ink);">
-                            Host Thread ID: <span id="targetCoords" class="font-mono text-white text-lg" style="color: var(--sickly-gold);"></span>
-                        </p>
-                        
-                        <!-- 1. Status during Loading (Initial state) -->
-                        <p id="loadingStatus" class="font-bold mt-1" style="color: var(--dark-ink);">
-                            State: <span id="loadingStatusText">Preparing the Host (Stitching Protocol)...</span>
-                        </p>
+                    <!-- STATUS CONTAINER -->
+                    <div id="statusContainer" class="flex-grow text-center">
+                        <h2 id="loadingTitle" class="text-2xl font-bold mb-2 flashing-text">
+                            THE HOST IS BEING PREPARED.
+                        </h2> 
 
-                        <!-- 2. Status during Tracking (Hidden until tracking starts) -->
-                        <p id="trackingStatus" class="font-bold mt-1 hidden" style="color: var(--sickly-gold); text-shadow: 0 0 5px var(--glyph-glow);">
-                            State: <span id="trackingStatusText">THE NEEDLE PIERCES. AWAIT THE WAKING.</span>
-                        </p>
+                        <h2 id="trackingTitle" class="text-2xl font-bold mb-2 hidden" style="color: var(--sickly-gold); text-shadow: 0 0 20px var(--glyph-glow);">
+                            THE DOLL ACCEPTS: AWAIT YOUR SUMMONING.
+                        </h2>
+                        
+                        <div class="status-box p-4 text-base">
+                            <p style="color: var(--dark-ink);">
+                                Host Thread ID: <span id="targetCoords" class="font-mono text-white text-lg" style="color: var(--sickly-gold);"></span>
+                            </p>
+                            
+                            <!-- 1. Status during Loading (Initial state) -->
+                            <p id="loadingStatus" class="font-bold mt-1" style="color: var(--dark-ink);">
+                                State: <span id="loadingStatusText">Preparing the Host (Stitching Protocol)...</span>
+                            </p>
+
+                            <!-- 2. Status during Tracking (Hidden until tracking starts) -->
+                            <p id="trackingStatus" class="font-bold mt-1 hidden" style="color: var(--sickly-gold); text-shadow: 0 0 5px var(--glyph-glow);">
+                                State: <span id="trackingStatusText">THE NEEDLE PIERCES. AWAIT THE WAKING.</span>
+                            </p>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- LOADING BAR AREA -->
-            <div id="loadingArea" class="flex justify-center flex-col items-center p-4">
-                <h3 class="text-lg mb-3" style="color: var(--dark-ink);">
-                    THREADING THE SOUL TETHER...
-                </h3>
-                <div class="w-full max-w-lg rounded-full h-4 relative overflow-hidden border" 
-                     style="background-color: #000000; border-color: var(--ritual-red);">
-                    <div id="progressBar" class="h-full rounded-full transition-all duration-100" 
-                         style="width: 0%; background-color: var(--ritual-red);"></div>
-                    <span id="progressText" class="absolute inset-0 flex items-center justify-center text-sm font-bold text-white text-shadow-sm">0%</span>
-                </div>
-            </div>
-
-            <!-- COUNTDOWN AND VIDEO AREA -->
-            <div class="flex justify-center flex-col items-center hidden" id="videoArea"> 
-                <div class="text-center mt-4">
-                    <h4 class="text-base text-gray-400 mb-1" style="color: var(--dark-ink);">
-                        SECONDS UNTIL THE HOST AWAKENS
-                    </h4>
-                    <!-- Countdown Display (DD:HH:MM:SS) - Flashing and Unstable -->
-                    <div id="countdownDisplay" class="countdown-unstable flashing-text">--:--:--:--</div>
+                <!-- LOADING BAR AREA -->
+                <div id="loadingArea" class="flex justify-center flex-col items-center p-4">
+                    <h3 class="text-lg mb-3" style="color: var(--dark-ink);">
+                        THREADING THE SOUL TETHER...
+                    </h3>
+                    <div class="w-full max-w-lg rounded-full h-4 relative overflow-hidden border" 
+                        style="background-color: #000000; border-color: var(--ritual-red);">
+                        <div id="progressBar" class="h-full rounded-full transition-all duration-100" 
+                            style="width: 0%; background-color: var(--ritual-red);"></div>
+                        <span id="progressText" class="absolute inset-0 flex items-center justify-center text-sm font-bold text-white text-shadow-sm">0%</span>
+                    </div>
                 </div>
 
-                <!-- Main Video Feed Player - THE SCAR -->
-                <video id="mainVideoFeed" loop playsinline controls
-                       class="rounded-md"
-                       style="border: 10px solid var(--sickly-gold); box-shadow: 0 0 30px var(--glyph-glow); background-color: black;">
-                    <!-- 'muted' is removed for default sound, requiring user tap to start both video and audio. -->
-                    <source id="mainVideoSource" src="https://www.dropbox.com/scl/fi/i0ccb5q6fdgwevp8cy2nz/ARG-video.mp4?rlkey=gfn6df819batrwe9xgfpnutbq&st=uvzs5axp&dl=1" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
-                
-                <p class="text-sm mt-3 font-semibold text-center" id="videoInstruction" style="color: var(--sickly-gold); text-shadow: 0 0 5px var(--glyph-glow);">
-                    WARNING: The doll waits for you.
-                </p>
+                <!-- COUNTDOWN AND LINK AREA -->
+                <div class="flex justify-center flex-col items-center hidden" id="videoArea"> 
+                    <div class="text-center mt-4">
+                        <h4 class="text-base text-gray-400 mb-1" style="color: var(--dark-ink);">
+                            SECONDS UNTIL THE HOST AWAKENS
+                        </h4>
+                        <!-- Countdown Display (DD:HH:MM:SS) - Flashing and Unstable -->
+                        <div id="countdownDisplay" class="countdown-unstable flashing-text">--:--:--:--</div>
+                    </div>
 
-                <p class="text-sm mt-3 font-semibold hidden" id="videoErrorText" style="color: var(--glyph-glow);">
-                    WARNING: THE PORTAL IS UNSTABLE. VIDEO FEED SEVERED.
-                </p>
+                    <!-- MODIFIED LINK -->
+                    <a id="dollsCallingLink" 
+                    href="https://res.cloudinary.com/dv6jfgesm/video/upload/v1761059902/The_Echo_Division_-_ARG_Video_ovejae.mp4" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    class="w-full max-w-lg p-6 my-8 block text-xl sm:text-2xl font-bold cursor-pointer transition duration-300 rounded-lg">
+                        <div class="flex items-center justify-between gap-4">
+                            <span class="text-left flex-1">
+                                Will you accept the doll's calling? Only the chosen can get this far.
+                            </span>
+                            <!-- Right Arrow Icon for navigation cue (Mobile optimization) -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="color: var(--sickly-gold);">
+                                <path d="M5 12h14"/>
+                                <path d="m12 5 7 7-7 7"/>
+                            </svg>
+                        </div>
+                    </a>
+                    
+                    <p class="text-sm mt-3 font-semibold text-center" style="color: var(--dark-ink);">
+                        The portal is open. Click the calling to accept the calling.
+                    </p>
+                </div>
             </div>
         </div>
-    </div>
-    <!-- END MAIN WINDOW CONTAINER -->
+        <!-- END MAIN WINDOW CONTAINER -->
+    </main>
     
+    <!-- FOOTER: Study Purpose Disclaimer - Now properly pushed to the bottom -->
+    <footer class="w-full text-center text-xs opacity-70 mb-4" style="color: var(--dark-ink);">
+        Made for ARG game study purposes
+    </footer>
+
     <!-- POPUP MODAL 2: ENDGAME ALERT -->
     <div id="endgameModal" class="modal-overlay hidden">
         <div class="occult-panel w-full max-w-lg p-8" style="border-color: white; box-shadow: 0 0 50px white;">
@@ -432,7 +445,7 @@
                 </p>
                 
                 <div class="flex justify-center my-6">
-                    <!-- Endgame Video -->
+                    <!-- Endgame Video (Kept for final cinematic flair) -->
                     <video id="endgameVideo" loop playsinline controls
                            class="w-full max-w-xs border-5 border-red-600" style="border-radius: 0; box-shadow: 0 0 30px var(--glyph-glow);">
                         <source src="https://www.dropbox.com/scl/fi/i0ccb5q6fdgwevp8cy2nz/ARG-video.mp4?rlkey=gfn6df819batrwe9xgfpnutbq&st=uvzs5axp&dl=1" type="video/mp4">
@@ -509,18 +522,16 @@
         const glitchOverlay = document.getElementById('glitchOverlay'); 
         const occultPanel = document.getElementById('occultPanel'); 
 
-        // VIDEO ELEMENTS
-        const mainVideoFeed = document.getElementById('mainVideoFeed');
-        const videoErrorText = document.getElementById('videoErrorText');
-        const videoInstruction = document.getElementById('videoInstruction');
+        // LINK ELEMENT
+        const dollsCallingLink = document.getElementById('dollsCallingLink');
         
         // STATUS & COUNTDOWN REFERENCES
+        const countdownDisplay = document.getElementById('countdownDisplay'); 
+        const targetCoordsText = document.getElementById('targetCoords');
         const loadingStatus = document.getElementById('loadingStatus'); 
         const loadingStatusText = document.getElementById('loadingStatusText');
         const trackingStatus = document.getElementById('trackingStatus'); 
         const trackingStatusText = document.getElementById('trackingStatusText');
-        const countdownDisplay = document.getElementById('countdownDisplay'); 
-        const targetCoordsText = document.getElementById('targetCoords');
         
         // Titles
         const loadingTitle = document.getElementById('loadingTitle');
@@ -530,6 +541,7 @@
         // MODALS
         const endgameModal = document.getElementById('endgameModal'); 
         const closeEndgameButton = document.getElementById('closeEndgameButton');
+        const endgameVideo = document.getElementById('endgameVideo'); // Kept for the modal
         
         // Other DOM references
         const loadingArea = document.getElementById('loadingArea');
@@ -539,11 +551,9 @@
 
         // =========================================================================
         // --- AUDIO ZONE 3: START AUDIO FUNCTION (Using HTML Audio) ---
-        // This now uses the native .play() method on the ambientAudio element.
         // =========================================================================
         function startAudioLoop() {
             if (ambientAudio) {
-                // Set volume lower for ambience (optional, but good for scary loops)
                 ambientAudio.volume = 0.5; 
                 ambientAudio.play().catch(error => {
                     console.warn("Ambient audio failed to play automatically. User interaction needed.", error);
@@ -554,7 +564,6 @@
 
         // =========================================================================
         // --- AUDIO ZONE 4: STOP AUDIO FUNCTION (Using HTML Audio) ---
-        // This now uses the native .pause() method on the ambientAudio element.
         // =========================================================================
         function stopAudioLoop() {
             if (ambientAudio) {
@@ -713,13 +722,12 @@
             
             // =========================================================================
             // --- AUDIO ZONE 5: STOP AUDIO CALL (Endgame) ---
-            // Stops the background audio if the countdown reaches zero.
             // =========================================================================
             stopAudioLoop(); 
             // =========================================================================
 
-            // Try to pause the main video if it was playing
-            mainVideoFeed.pause();
+            // Try to pause the modal video if it was playing
+            endgameVideo.pause();
 
             trackingStatusText.textContent = "THE WICK IS TRIMMED. WELCOME TO THE TOYBOX.";
             
@@ -781,7 +789,6 @@
             
             // =========================================================================
             // --- AUDIO ZONE 6: START AUDIO CALL (Initial Activation) ---
-            // This starts the custom MP3 loop right after the user provides the password.
             // =========================================================================
             startAudioLoop(); 
             // =========================================================================
@@ -800,7 +807,7 @@
             loadingArea.classList.add('hidden');
             loadingStatus.classList.add('hidden'); 
             
-            // 2. Show the video area and the tracking status
+            // 2. Show the countdown/link area and the tracking status
             videoArea.classList.remove('hidden');
             trackingStatus.classList.remove('hidden'); 
             
@@ -809,34 +816,20 @@
             
             // 3. Start the active countdown
             startRealWorldCountdown();
-            
-            // NOTE: We do NOT call video.play() here because it is unmuted and will fail.
-            // The user must tap the video controls themselves.
         }
         
         // =========================================================================
         // EVENT LISTENERS
         // =========================================================================
 
-        mainVideoFeed.addEventListener('error', (e) => {
-            console.error("Main video error: Check file path and format.", e);
-            if (resultArea.classList.contains('hidden')) return;
-            videoErrorText.classList.remove('hidden');
-            videoInstruction.classList.add('hidden');
-        });
-        
-        // =========================================================================
-        // --- AUDIO ZONE 7: STOP AUDIO CALL (Video Play) ---
-        // This is the critical line: stops the ambient sound when the user 
-        // successfully plays the video (which requires user interaction).
-        // =========================================================================
-        mainVideoFeed.addEventListener('play', () => {
+        // --- NEW: Stop the ambient audio when the user clicks the final link ---
+        dollsCallingLink.addEventListener('click', () => {
+            // =========================================================================
+            // --- AUDIO ZONE 7: STOP AUDIO CALL (Link Click) ---
+            // =========================================================================
             stopAudioLoop(); 
-            videoInstruction.classList.add('hidden');
-            videoErrorText.classList.add('hidden');
+            // =========================================================================
         });
-        // =========================================================================
-
 
         closeEndgameButton.onclick = () => {
             endgameModal.classList.add('hidden');
@@ -848,7 +841,7 @@
             countdownDisplay.textContent = formatTime(countdownEndTime - Date.now());
 
             checkPassword(); 
-            mainVideoFeed.load();
+            endgameVideo.load();
             
             // Start ambient effects immediately
             spawnGlyph(); 
@@ -858,4 +851,3 @@
     </script>
 </body>
 </html>
-
